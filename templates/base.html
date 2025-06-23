@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Fiyat Takip Sistemi{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            display: flex;
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .sidebar {
+            width: 220px;
+            background-color: #343a40;
+            color: white;
+            padding: 20px;
+            height: 100vh;
+            position: fixed;
+        }
+        .sidebar h4 {
+            color: #fff;
+            margin-bottom: 20px;
+        }
+        .sidebar a {
+            color: #ccc;
+            display: block;
+            margin: 12px 0;
+            text-decoration: none;
+            padding-left: 10px;
+        }
+        .sidebar a:hover {
+            color: #ffffff;
+            background-color: #495057;
+            border-radius: 4px;
+        }
+        .content {
+            margin-left: 220px;
+            padding: 40px;
+            width: 100%;
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h4>Menü</h4>
+        <a href="/">Ürün Takibi</a>
+        <a href="/gelirler">Gelirler</a>
+        <a href="/satis-ekle">Satış Ekle</a>
+    </div>
+
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

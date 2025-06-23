@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Ürün Takibi{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Fiyat Takip Sistemi</h1>
+
+<!-- FORM -->
+<form method="POST" class="row g-3 mb-5">
+    <div class="col-md-4">
+        <input type="text" name="barkod" class="form-control" placeholder="Ürün barkodu" required>
+    </div>
+    <div class="col-md-4">
+        <input type="text" name="satis_fiyati" class="form-control" placeholder="Trendyol Satış Fiyatı" required>
+    </div>
+    <div class="col-md-4">
+        <input type="text" name="kazanc" class="form-control" placeholder="Beklenen Kazanç" required>
+    </div>
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary">Ekle</button>
+    </div>
+    <div class="mb-3">
+    <div class="mb-3">
+    <input type="text" id="aramaInput" class="form-control" placeholder="Barkoda göre ara...">
+</div>
+</div>
+</form>
+
+<!-- TABLO -->
+<table id="urun-tablosu" class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Barkod</th>
+            <th>Link</th>
+            <th>Fiyat</th>
+            <th>Stok</th>
+            <th>Trendyol Satış Fiyatı</th>
+            <th>Kazanç</th>
+            <th>Sil</th>
+        </tr>
+    </thead>
+    <!-- Liste -->
+<tbody>
+    {% for link in links %}
+    <tr>
+        <td>{{ link.barkod }}</td> <!-- YENİ -->
+        <td><a href="{{ link.url }}" target="_blank">{{ link.url }}</a></td>
+        <td>{{ link.last_price or "-" }}</td>
+        <td>{{ link.last_stock or "-" }}</td>
+        <td>{{ link.satis_fiyati or "-" }}</td>
+        <td>{{ link.kazanc or "-" }}</td>
+        <td><a href="/sil/{{ link.barkod }}" class="btn btn-danger btn-sm">Sil</a></td>
+    </tr>
+    {% endfor %}
+</tbody>
+
+</table>
+
+<div class="d-flex justify-content-between align-items-center mt-4">
+    {% if sayfa > 1 %}
+    <a href="/?sayfa={{ sayfa - 1 }}" class="btn btn-secondary">Geri</a>
+    {% else %}
+    <span class="btn btn-secondary disabled">Geri</span>
+    {% endif %}
+
+    <span>Sayfa {{ sayfa }} / {{ toplam_sayfa }}</span>
+
+    {% if sayfa < toplam_sayfa %}
+    <a href="/?sayfa={{ sayfa + 1 }}" class="btn btn-secondary">İleri</a>
+    {% else %}
+    <span class="btn btn-secondary disabled">İleri</span>
+    {% endif %}
+</div>
+
+
+
+<script>
+   document.getElementById("aramaInput").addEventListener("keyup", function () {
+    const arama = this.value.toLowerCase();
+    const satirlar = document.querySelectorAll("#urun-tablosu tbody tr");
+
+    satirlar.forEach(row => {
+        const barkodCell = row.querySelector("td:first-child").textContent.toLowerCase();
+        row.style.display = barkodCell.includes(arama) ? "" : "none";
+    });
+
+    // Arama yapılınca sayfalama devre dışı
+    document.getElementById("page-info").textContent = "";
+    document.getElementById("prev-btn").disabled = true;
+    document.getElementById("next-btn").disabled = true;
+});
+
+
+    let currentPage = 1;
+    const rowsPerPage = 10;
+
+    function showPage(page) {
+        const rows = Array.from(document.querySelectorAll("#urun-tablosu tbody tr"));
+        const totalPages = Math.ceil(rows.length / rowsPerPage);
+
+        if (page < 1 || page > totalPages) return;
+
+        rows.forEach((row, index) => {
+            row.style.display = (index >= (page - 1) * rowsPerPage && index < page * rowsPerPage) ? "" : "none";
+        });
+
+        document.getElementById("page-info").textContent = `Sayfa ${page} / ${totalPages}`;
+        document.getElementById("prev-btn").disabled = page === 1;
+        document.getElementById("next-btn").disabled = page === totalPages;
+
+        currentPage = page;
+    }
+
+    function nextPage() {
+        showPage(currentPage + 1);
+    }
+
+    function prevPage() {
+        showPage(currentPage - 1);
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        showPage(1);
+    });
+</script>
+{% endblock %}

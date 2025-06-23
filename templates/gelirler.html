@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Gelirler{% endblock %}
+
+{% block content %}
+<h2 class="mb-3">Günlük Kazanç Grafiği</h2>
+
+<!-- Tarih Seçimi -->
+<div class="mb-4">
+  <label for="tarihSec" class="form-label">Tarih Seç:</label>
+  <select id="tarihSec" class="form-select">
+    {% for tarih in grafik.keys() %}
+      <option value="{{ tarih }}">{{ tarih }}</option>
+    {% endfor %}
+  </select>
+</div>
+
+<!-- Grafik Alanı -->
+<canvas id="gelirGrafik" height="100"></canvas>
+
+<!-- Toplam Kazanç Gösterimi -->
+<div class="mt-3">
+  <h5>Seçilen Günün Kazancı: <span id="kazancGoster">₺ 0</span></h5>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const data = {{ grafik | tojson }};
+  const labels = Object.keys(data);
+  const kazanc = Object.values(data);
+
+  const ctx = document.getElementById("gelirGrafik").getContext("2d");
+
+  const chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Günlük Kazanç (₺)',
+        data: kazanc,
+        borderColor: 'rgba(75, 192, 192, 1)',
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        tension: 0.3,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+
+  // Gün seçildiğinde kazancı yaz
+  const tarihSec = document.getElementById("tarihSec");
+  const kazancGoster = document.getElementById("kazancGoster");
+
+  function guncelleKazanc() {
+    const seciliTarih = tarihSec.value;
+    kazancGoster.textContent = "₺ " + data[seciliTarih];
+  }
+
+  tarihSec.addEventListener("change", guncelleKazanc);
+
+  // Sayfa yüklendiğinde ilk günün kazancını göster
+  document.addEventListener("DOMContentLoaded", guncelleKazanc);
+</script>
+{% endblock %}
