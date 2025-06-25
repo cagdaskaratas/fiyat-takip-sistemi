@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}3. Kişiler Borç / Alacak{% endblock %}
+{% block content %}
+<div class="container mt-4">
+
+  <!-- Flash mesajlar -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <h3 class="mb-4">3. Kişilere Olan Borçlar ve Alacaklar</h3>
+  <div class="row">
+
+    <!-- SOL: VERİLECEKLER -->
+    <div class="col-md-6">
+      <h5>💸 Verilecekler</h5>
+
+      <!-- Ekleme Formu -->
+      <form method="POST">
+        <div class="mb-2">
+          <input type="text" name="ver_kisi" class="form-control" placeholder="Kişi Adı" required>
+        </div>
+        <div class="mb-2">
+          <input type="number" step="0.01" name="ver_tutar" class="form-control" placeholder="Tutar (₺)" required>
+        </div>
+        <button type="submit" name="verilecek_ekle" class="btn btn-danger btn-sm">Ekle</button>
+      </form>
+
+      <!-- Güncelleme Formu -->
+      <form method="POST" action="/verilecek-guncelle">
+        <table class="table table-bordered mt-3">
+          <thead class="table-dark">
+            <tr>
+              <th>Kişi</th>
+              <th>Tutar</th>
+              <th>İşlem</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for v in verilecekler %}
+            <tr>
+              <td>
+                <input type="hidden" name="id_{{ loop.index0 }}" value="{{ v.id }}">
+                <input type="text" name="kisi_{{ loop.index0 }}" value="{{ v.kisi }}" class="form-control" required>
+              </td>
+              <td>
+                <input type="number" name="tutar_{{ loop.index0 }}" value="{{ v.tutar }}" step="0.01" class="form-control" required>
+              </td>
+              <td>
+                <a href="/verilecek-sil/{{ v.id }}" class="btn btn-danger btn-sm">Sil</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <input type="hidden" name="toplam" value="{{ verilecekler|length }}">
+        <button type="submit" class="btn btn-warning">Verilecekleri Kaydet</button>
+      </form>
+      <div class="text-end mt-2"><strong>Toplam: ₺{{ toplam_verilecek }}</strong></div>
+    </div>
+
+    <!-- SAĞ: ALACAKLAR -->
+    <div class="col-md-6">
+      <h5>💰 Alacaklar</h5>
+
+      <!-- Ekleme Formu -->
+      <form method="POST">
+        <div class="mb-2">
+          <input type="text" name="al_kisi" class="form-control" placeholder="Kişi Adı" required>
+        </div>
+        <div class="mb-2">
+          <input type="number" step="0.01" name="al_tutar" class="form-control" placeholder="Tutar (₺)" required>
+        </div>
+        <button type="submit" name="alacak_ekle" class="btn btn-success btn-sm">Ekle</button>
+      </form>
+
+      <!-- Güncelleme Formu -->
+      <form method="POST" action="/alacak-guncelle">
+        <table class="table table-bordered mt-3">
+          <thead class="table-dark">
+            <tr>
+              <th>Kişi</th>
+              <th>Tutar</th>
+              <th>İşlem</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for a in alacaklar %}
+            <tr>
+              <td>
+                <input type="hidden" name="id_{{ loop.index0 }}" value="{{ a.id }}">
+                <input type="text" name="kisi_{{ loop.index0 }}" value="{{ a.kisi }}" class="form-control" required>
+              </td>
+              <td>
+                <input type="number" name="tutar_{{ loop.index0 }}" value="{{ a.tutar }}" step="0.01" class="form-control" required>
+              </td>
+              <td>
+                <a href="/alacak-sil/{{ a.id }}" class="btn btn-danger btn-sm">Sil</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <input type="hidden" name="toplam" value="{{ alacaklar|length }}">
+        <button type="submit" class="btn btn-warning">Alacakları Kaydet</button>
+      </form>
+      <div class="text-end mt-2"><strong>Toplam: ₺{{ toplam_alacak }}</strong></div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}3. Kişilere Olan Borçlar ve Alacaklar{% endblock %}
+{% block content %}
+
+<div class="container mt-4">
+  <h3 class="mb-4">👥 3. Kişilere Olan Borçlar ve Alacaklar</h3>
+  
+  <div class="row">
+    <!-- Verilecek -->
+    <div class="col-md-6">
+      <h5>Verilecek</h5>
+      <form method="POST" action="/verilecek-ekle" class="mb-3">
+        <div class="input-group mb-2">
+          <input type="text" name="kisi" class="form-control" placeholder="Kişi Adı" required>
+          <input type="number" step="0.01" name="tutar" class="form-control" placeholder="Tutar" required>
+          <button type="submit" class="btn btn-success">Ekle</button>
+        </div>
+      </form>
+      <table class="table table-bordered">
+        <thead class="table-dark">
+          <tr>
+            <th>Kişi</th>
+            <th>Tutar</th>
+            <th>İşlem</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for v in verilecek %}
+          <tr>
+            <form method="POST" action="/verilecek-guncelle">
+              <input type="hidden" name="id" value="{{ v.id }}">
+              <td><input type="text" name="kisi" value="{{ v.kisi }}" class="form-control"></td>
+              <td><input type="number" step="0.01" name="tutar" value="{{ v.tutar }}" class="form-control"></td>
+              <td>
+                <button type="submit" class="btn btn-warning btn-sm">Kaydet</button>
+                <a href="/verilecek-sil/{{ v.id }}" class="btn btn-danger btn-sm">Sil</a>
+              </td>
+            </form>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Alacak -->
+    <div class="col-md-6">
+      <h5>Alacak</h5>
+      <form method="POST" action="/alacak-ekle" class="mb-3">
+        <div class="input-group mb-2">
+          <input type="text" name="kisi" class="form-control" placeholder="Kişi Adı" required>
+          <input type="number" step="0.01" name="tutar" class="form-control" placeholder="Tutar" required>
+          <button type="submit" class="btn btn-success">Ekle</button>
+        </div>
+      </form>
+      <table class="table table-bordered">
+        <thead class="table-dark">
+          <tr>
+            <th>Kişi</th>
+            <th>Tutar</th>
+            <th>İşlem</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for a in alacak %}
+          <tr>
+            <form method="POST" action="/alacak-guncelle">
+              <input type="hidden" name="id" value="{{ a.id }}">
+              <td><input type="text" name="kisi" value="{{ a.kisi }}" class="form-control"></td>
+              <td><input type="number" step="0.01" name="tutar" value="{{ a.tutar }}" class="form-control"></td>
+              <td>
+                <button type="submit" class="btn btn-warning btn-sm">Kaydet</button>
+                <a href="/alacak-sil/{{ a.id }}" class="btn btn-danger btn-sm">Sil</a>
+              </td>
+            </form>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <hr class="mt-4">
+  <div class="text-end">
+    <strong>Toplam Verilecek:</strong> ₺{{ toplam_verilecek }}<br>
+    <strong>Toplam Alacak:</strong> ₺{{ toplam_alacak }}
+  </div>
+</div>
+
+{% endblock %}

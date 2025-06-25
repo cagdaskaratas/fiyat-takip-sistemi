@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %}Finans - Gelir & Gider{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="mt-3">
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+  <h2 class="mb-4">💰 Finans - Gelir & Gider Takibi</h2>
+  <form method="POST" class="d-flex justify-content-end align-items-center gap-2 mb-3">
+  <select name="arsiv_ayi" class="form-select w-auto">
+    {% for ay in ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"] %}
+      <option value="{{ ay }}">{{ ay }}</option>
+    {% endfor %}
+  </select>
+  <button type="submit" name="arsiv_al" class="btn btn-outline-primary">Ay Sonu Al</button>
+</form>
+
+  <div class="row">
+
+    <!-- Gider Formu -->
+    <div class="col-md-6">
+      <h4>Gider Ekle</h4>
+      <form method="POST">
+        <input type="number" step="0.01" name="expense_amount" placeholder="Tutar" required class="form-control mb-2">
+        <input type="text" name="expense_category" placeholder="Kategori" required class="form-control mb-2">
+        <input type="text" name="expense_description" placeholder="Açıklama" class="form-control mb-2">
+        <button type="submit" name="expense_submit" class="btn btn-danger w-100">Gider Ekle</button>
+      </form>
+
+      <hr>
+      <h5 class="mt-3">Giderler</h5>
+      <table class="table table-striped table-sm">
+        <thead>
+          <tr>
+            <th>Tutar</th>
+            <th>Kategori</th>
+            <th>Açıklama</th>
+            <th>İşlem</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for e in expenses %}
+          <tr>
+            <td>{{ e.amount }} ₺</td>
+            <td>{{ e.category }}</td>
+            <td>{{ e.description }}</td>
+            <td>
+              <form method="POST" action="{{ url_for('sil_gider', index=loop.index0) }}">
+                <button class="btn btn-sm btn-outline-danger" onclick="return confirm('Silinsin mi?')">Sil</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <strong>Toplam Gider: {{ total_expense }} ₺</strong>
+    </div>
+
+    <!-- Gelir Formu -->
+    <div class="col-md-6">
+      <h4>Gelir Ekle</h4>
+      <form method="POST">
+        <input type="number" step="0.01" name="income_amount" placeholder="Tutar" required class="form-control mb-2">
+        <input type="text" name="income_category" placeholder="Kategori" required class="form-control mb-2">
+        <input type="text" name="income_description" placeholder="Açıklama" class="form-control mb-2">
+        <button type="submit" name="income_submit" class="btn btn-success w-100">Gelir Ekle</button>
+      </form>
+
+      <hr>
+      <h5 class="mt-3">Gelirler</h5>
+      <table class="table table-striped table-sm">
+        <thead>
+          <tr>
+            <th>Tutar</th>
+            <th>Kategori</th>
+            <th>Açıklama</th>
+            <th>İşlem</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for i in incomes %}
+          <tr>
+            <td>{{ i.amount }} ₺</td>
+            <td>{{ i.category }}</td>
+            <td>{{ i.description }}</td>
+            <td>
+              <form method="POST" action="{{ url_for('sil_gelir', index=loop.index0) }}">
+                <button class="btn btn-sm btn-outline-danger" onclick="return confirm('Silinsin mi?')">Sil</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <strong>Toplam Gelir: {{ total_income }} ₺</strong>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

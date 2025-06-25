@@ -125,3 +125,13 @@ def barkod_xml_iceriyor_mu(xml_path, barkod):
     except Exception as e:
         print(f"XML kontrol hatası: {e}")
         return False
+import json
+
+def load_data():
+    with open("banka_veri.json", "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def save_data(data):
+    with open("banka_veri.json", "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=4, ensure_ascii=False)
+

@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="text-center mb-4">📊 Finansal Grafikler</h1>
+
+    <div class="row">
+        <div class="col-md-6 text-center">
+            <h5>Gider Dağılımı</h5>
+            <canvas id="giderChart" height="300"></canvas>
+        </div>
+        <div class="col-md-6 text-center">
+            <h5>Gelir Dağılımı</h5>
+            <canvas id="gelirChart" height="300"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const giderData = {
+        labels: {{ gider_labels|tojson }},
+        datasets: [{
+            data: {{ gider_values|tojson }},
+            backgroundColor: ['#f87171', '#fb923c', '#facc15', '#34d399', '#60a5fa', '#c084fc', '#f472b6']
+        }]
+    };
+
+    const gelirData = {
+        labels: {{ gelir_labels|tojson }},
+        datasets: [{
+            data: {{ gelir_values|tojson }},
+            backgroundColor: ['#86efac', '#4ade80', '#22d3ee', '#818cf8', '#e879f9', '#f472b6', '#facc15']
+        }]
+    };
+
+    const giderChart = new Chart(document.getElementById("giderChart"), {
+        type: 'pie',
+        data: giderData,
+        options: {
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.label || '';
+                            let value = context.parsed;
+                            return `${label}: ${value.toLocaleString('tr-TR')} ₺`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    const gelirChart = new Chart(document.getElementById("gelirChart"), {
+        type: 'pie',
+        data: gelirData,
+        options: {
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.label || '';
+                            let value = context.parsed;
+                            return `${label}: ${value.toLocaleString('tr-TR')} ₺`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

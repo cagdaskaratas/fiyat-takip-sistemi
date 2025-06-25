@@ -61,12 +61,15 @@
 
   function guncelleKazanc() {
     const seciliTarih = tarihSec.value;
-    kazancGoster.textContent = "₺ " + data[seciliTarih];
+    kazancGoster.textContent = "₺ " + (data[seciliTarih] || 0);
   }
 
   tarihSec.addEventListener("change", guncelleKazanc);
 
-  // Sayfa yüklendiğinde ilk günün kazancını göster
-  document.addEventListener("DOMContentLoaded", guncelleKazanc);
+  // Sayfa yüklendiğinde ilk günü seç ve kazancı göster
+  document.addEventListener("DOMContentLoaded", function() {
+    tarihSec.selectedIndex = 0;
+    guncelleKazanc();
+  });
 </script>
 {% endblock %}

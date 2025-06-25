@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <meta charset="UTF-8">
     <title>{% block title %}Fiyat Takip Sistemi{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -49,9 +50,63 @@
 <body>
     <div class="sidebar">
         <h4>Menü</h4>
-        <a href="/">Ürün Takibi</a>
-        <a href="/gelirler">Gelirler</a>
-        <a href="/satis-ekle">Satış Ekle</a>
+        <a href="/">📦 Ürün Takibi</a>
+        <a href="/gelirler">📊 Gelirler</a>
+        <a href="/satis-ekle">🤑 Satış Ekle</a>
+        <li class="nav-item" style="list-style-type: none;">
+  <a class="nav-link dropdown-toggle {{ 'show' if 'finans' in request.path or 'kisiler' in request.path or 'birikimler' in request.path else '' }}" 
+   href="#" 
+   id="finansMenu" 
+   data-bs-toggle="collapse" 
+   data-bs-target="#finansAltMenu" 
+   aria-expanded="{{ 'true' if 'finans' in request.path or 'kisiler' in request.path or 'birikimler' in request.path else 'false' }}">
+   💰 Finans
+</a>
+  <div class="collapse {{ 'show' if 'finans' in request.path or 'kisiler' in request.path or 'birikimler' in request.path else '' }}" id="finansAltMenu">
+    <ul class="list-unstyled ps-3">
+      <li>
+        <a class="nav-link {% if request.path == '/finans/gelir-gider' %}active{% endif %}" href="{{ url_for('finans_gelir_gider') }}">
+          📊 Finans / Gelir & Gider
+        </a>
+      </li>
+      <li>
+        <a class="nav-link {% if request.path == '/finans/banka' %}active{% endif %}" href="{{ url_for('banka_bilgilerim') }}">
+          🏦 Banka Hesaplarım & Borçlarım
+        </a>
+      </li>
+      <li>
+        <a class="nav-link {% if request.path == '/kisiler' %}active{% endif %}" href="{{ url_for('kisiler') }}">
+          👤 3. Kişilere Olan Borç / Alacak
+        </a>
+      </li>
+      <li>
+      <a class="nav-link {% if request.path == '/birikimler' %}active{% endif %}" href="{{ url_for('birikimler') }}">
+         📈 Birikimler
+      </a>
+    </li>
+    <li>
+  <a class="nav-link {% if request.path == '/finans/grafikler' %}active{% endif %}" href="/finans/grafikler">
+    📐 Finans Grafikler
+  </a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="/finans/arsiv">
+    <i class="bi bi-archive"></i>
+    <span>📁 Arşiv</span>
+  </a>
+</li>
+
+
+    </ul>
+  </div>
+</li>
+
+
+
+
+        
+
+
     </div>
 
     <div class="content">

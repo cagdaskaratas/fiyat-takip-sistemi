@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Birikimler{% endblock %}
+{% block content %}
+<div class="container mt-4">
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <h3 class="mb-4">📈 Birikimler</h3>
+
+  <!-- EKLEME FORMU -->
+  <form method="POST" class="row g-3 mb-4">
+    <input type="hidden" name="birikim_ekle" value="1">
+    <div class="col-md-3"><input type="text" name="birikim_ad" class="form-control" placeholder="Birikim Adı" required></div>
+    <div class="col-md-2"><input type="number" name="miktar" step="0.01" class="form-control" placeholder="Miktar" required></div>
+    <div class="col-md-2"><input type="number" name="deger" step="0.01" class="form-control" placeholder="Değeri" required></div>
+    <div class="col-md-2"><input type="number" name="alis" step="0.01" class="form-control" placeholder="Alış Fiyatı" required></div>
+    <div class="col-md-2"><input type="date" name="tarih" class="form-control" required></div>
+    <div class="col-md-1"><button type="submit" class="btn btn-success w-100">Ekle</button></div>
+  </form>
+
+  <!-- TABLO -->
+  <form method="POST" action="/birikim-guncelle">
+    <table class="table table-hover table-bordered">
+      <thead class="table-dark">
+        <tr>
+          <th>Ad</th><th>Miktar</th><th>Değer</th><th>Alış</th><th>Tarih</th><th>İşlem</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for b in birikimler %}
+        <tr>
+          <input type="hidden" name="id_{{ loop.index0 }}" value="{{ b.id }}">
+          <td><input type="text" class="form-control" name="ad_{{ loop.index0 }}" value="{{ b.ad }}"></td>
+          <td><input type="number" class="form-control" name="miktar_{{ loop.index0 }}" step="0.01" value="{{ b.miktar }}"></td>
+          <td><input type="number" class="form-control" name="deger_{{ loop.index0 }}" step="0.01" value="{{ b.deger }}"></td>
+          <td><input type="number" class="form-control" name="alis_{{ loop.index0 }}" step="0.01" value="{{ b.alis }}"></td>
+          <td><input type="date" class="form-control" name="tarih_{{ loop.index0 }}" value="{{ b.tarih }}"></td>
+          <td><a href="/birikim-sil/{{ b.id }}" class="btn btn-danger btn-sm">Sil</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <input type="hidden" name="toplam" value="{{ birikimler|length }}">
+    <button type="submit" class="btn btn-warning">Kaydet</button>
+  </form>
+  <div class="text-end mt-3">
+  <strong>Toplam Değer:</strong> <span class="text-success fw-bold">₺{{ toplam_deger }}</span>
+</div>
+
+</div>
+{% endblock %}

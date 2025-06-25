@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h4 class="mb-4">📦 Arşivlenen Aylar</h4>
+
+{% for ay, detay in arsivler.items() %}
+  <div class="card mb-4">
+    <div class="card-header bg-light fw-bold d-flex justify-content-between align-items-center">
+      <span>{{ ay }}</span>
+      <form method="POST" action="{{ url_for('arsiv_sil') }}" onsubmit="return confirm('{{ ay }} ayını silmek istediğinize emin misiniz?');">
+        <input type="hidden" name="ay" value="{{ ay }}">
+        <button type="submit" class="btn btn-sm btn-danger">Sil</button>
+      </form>
+    </div>
+    <div class="card-body">
+      <h6>Giderler</h6>
+      {% set toplam_gider = 0 %}
+<ul class="list-group mb-3">
+  {% for g in detay.expenses %}
+    {% set gider_tutar = g.amount | float %}
+    {% set toplam_gider = toplam_gider + gider_tutar %}
+    <li class="list-group-item d-flex justify-content-between">
+      <span>{{ g.category }} - {{ g.description }}</span>
+      <span>{{ gider_tutar }} ₺</span>
+    </li>
+  {% endfor %}
+    <li class="list-group-item d-flex justify-content-between bg-light fw-bold">
+  <span>Toplam Gider</span>
+  <span>{{ detay.toplam_gider }} ₺</span>
+</li>
+
+  </li>
+</ul>
+
+
+      <h6>Gelirler</h6>
+      {% set toplam_gelir = 0 %}
+<ul class="list-group">
+  {% for g in detay.incomes %}
+    {% set gelir_tutar = g.amount | float %}
+    {% set toplam_gelir = toplam_gelir + gelir_tutar %}
+    <li class="list-group-item d-flex justify-content-between">
+      <span>{{ g.category }} - {{ g.description }}</span>
+      <span>{{ gelir_tutar }} ₺</span>
+    </li>
+  {% endfor %}
+    <li class="list-group-item d-flex justify-content-between bg-light fw-bold">
+  <span>Toplam Gelir</span>
+  <span>{{ detay.toplam_gelir }} ₺</span>
+</li>
+
+  </li>
+</ul>
+
+    </div>
+  </div>
+{% else %}
+  <p>Henüz arşivlenmiş ay yok.</p>
+{% endfor %}
+
+{% endblock %}

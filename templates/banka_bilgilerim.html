@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% block title %}Banka Hesap Bilgilerim & Borçlarım{% endblock %}
+{% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<div class="container mt-4">
+
+  <h3 class="mb-3">🏦 Banka Hesap Bilgilerim</h3>
+  <form method="POST" class="row g-3 mb-4">
+  <div class="col-md-6">
+    <label class="form-label">Banka Adı</label>
+    <input type="text" name="banka_adi" class="form-control" required>
+  </div>
+  <div class="col-md-6">
+    <label class="form-label">Şifre</label>
+    <input type="text" name="sifre" class="form-control" required>
+  </div>
+  <div class="col-12">
+    <button type="submit" name="hesap_ekle" class="btn btn-primary">Hesap Ekle</button>
+  </div>
+</form>
+
+
+  <form method="POST" action="/hesap-guncelle">
+  <table class="table table-bordered">
+    <thead class="table-dark">
+      <tr>
+        <th>Banka Adı</th>
+        <th>Şifre</th>
+        <th>İşlem</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for h in hesaplar %}
+      <tr>
+        <td>
+          <input type="hidden" name="id_{{ loop.index0 }}" value="{{ h.id }}">
+          <input type="text" name="banka_adi_{{ loop.index0 }}" value="{{ h.banka_adi }}" class="form-control" required>
+        </td>
+        <td>
+          <input type="text" name="sifre_{{ loop.index0 }}" value="{{ h.sifre }}" class="form-control" required>
+        </td>
+        <td>
+          <a href="/hesap-sil/{{ h.id }}" class="btn btn-danger btn-sm">Sil</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <input type="hidden" name="toplam" value="{{ hesaplar|length }}">
+  <button type="submit" class="btn btn-warning">Değişiklikleri Kaydet</button>
+</form>
+
+
+
+  <hr class="my-5">
+
+  <h3 class="mb-3">💳 Borç Bilgilerim</h3>
+
+  <form method="POST" class="row g-3 mb-4">
+    <div class="col-md-4">
+      <label class="form-label">Banka Adı</label>
+      <input type="text" name="borc_banka" class="form-control" required>
+    </div>
+    <div class="col-md-2">
+      <label class="form-label">Faiz (%)</label>
+      <input type="number" step="0.01" name="faiz" class="form-control" required>
+    </div>
+    <div class="col-md-2">
+      <label class="form-label">Çekilen Tutar</label>
+      <input type="number" step="0.01" name="cekilen" class="form-control" required>
+    </div>
+    <div class="col-md-2">
+      <label class="form-label">Taksit</label>
+      <input type="number" step="0.01" name="taksit" class="form-control" required>
+    </div>
+    <div class="col-md-2">
+      <label class="form-label">Kalan Borç</label>
+      <input type="number" step="0.01" name="kalan" class="form-control" required>
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Taksit Tarihi</label>
+      <input type="date" name="taksit_tarihi" class="form-control" required>
+    </div>
+    <div class="col-12">
+      <button type="submit" name="borc_ekle" class="btn btn-success">Borç Ekle</button>
+    </div>
+  </form>
+
+  <form method="POST" action="/borc-guncelle">
+  <table class="table table-hover table-bordered">
+    <thead class="table-dark">
+      <tr>
+        <th>Banka</th>
+        <th>Faiz</th>
+        <th>Çekilen</th>
+        <th>Taksit</th>
+        <th>Kalan</th>
+        <th>Tarih</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for b in borclar %}
+      <tr>
+        <tr>
+  <input type="hidden" name="{{ 'id_' ~ loop.index0 }}" value="{{ b.id }}">
+  <td><input type="text" class="form-control" name="{{ 'banka_' ~ loop.index0 }}" value="{{ b.banka }}"></td>
+  <td><input type="number" step="0.01" class="form-control" name="{{ 'faiz_' ~ loop.index0 }}" value="{{ b.faiz }}"></td>
+  <td><input type="number" step="0.01" class="form-control" name="{{ 'cekilen_' ~ loop.index0 }}" value="{{ b.cekilen }}"></td>
+  <td><input type="number" step="0.01" class="form-control" name="{{ 'taksit_' ~ loop.index0 }}" value="{{ b.taksit }}"></td>
+  <td><input type="number" step="0.01" class="form-control" name="{{ 'kalan_' ~ loop.index0 }}" value="{{ b.kalan }}"></td>
+  <td>
+    <input type="date" class="form-control mb-2" name="{{ 'tarih_' ~ loop.index0 }}" value="{{ b.tarih }}">
+    
+    <!-- Silme butonu (GET ile) -->
+    <a href="/borc-sil/{{ b.id }}" class="btn btn-sm btn-danger w-100" onclick="return confirm('Bu borcu silmek istediğine emin misin?')">Sil</a>
+  </td>
+</tr>
+
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <input type="hidden" name="toplam" value="{{ borclar|length }}">
+  <button type="submit" class="btn btn-warning">Değişiklikleri Kaydet</button>
+</form>
+  <div class="mt-3 text-end">
+    <strong>Toplam Kalan Borç:</strong> <span class="text-danger fw-bold">₺{{ toplam_kalan }}</span>
+  </div>
+</div>
+{% endblock %}
